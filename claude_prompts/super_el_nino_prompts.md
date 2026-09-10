@@ -67,6 +67,14 @@ Use Fable if you can.  Log your work.
 
 3. I have answered your questions in Q&A/One pager.  Please read my responses, then generate the one pager.  Use Fable if you can.  Log your work.
 
+### Public Newsletter
+
+1. We now wish to turn the full report into a public newsletter.  We will:
+    - Choose one or two figures that are most digestible and most informative for a general audience.  Especially those living in the Monterey Bay region.
+    - Make a one page Markdown file that will be on GitHub but redirected to from a UCSC website.
+
+Use Fable if you can.  Log your work.
+
 ## Q&A
 
 ## One pager
@@ -869,3 +877,64 @@ xavier@ucolick.org, so that account is the file's owner although it sits in
 jxp@ucsc.edu's folder; transfer ownership in Drive if that matters. Google's
 import may reflow the layout relative to the LibreOffice render (fonts, page
 breaks); worth a look in the browser.
+
+### 2026-09-10 (Public newsletter, prompt 1: built the public Markdown page with two figures)
+
+**What was asked.** Turn the September report into a public newsletter: one or two
+figures that are digestible for a general audience, especially Monterey Bay
+residents, and one Markdown page that lives on GitHub and is the target of a
+redirect from a UCSC web page.
+
+**Figure choice.** The two figures already redesigned for the leadership briefing
+are the right ones for the public and were re-used unchanged: (1) the event
+composite with the "we are here" arrow (four curves, °C and °F axes, month names)
+— it makes the single most digestible point, that the local ocean enters this
+El Niño warmer than at the same stage of any past event; (2) the 20-year Line
+66.7 index next to NOAA's El Niño index, which shows a lay reader why the coming
+winter matters here. The report's own figures were rejected for this audience:
+the transect (Fig. 5) and the Hovmöllers need oceanographic explanation, and the
+OISST map (Fig. 8) is labelled in jargon.
+
+**Data snag.** `$OS_SPRAY/CUGN/Line_66/products/` is empty on this machine (the
+directory tree was recreated today, 15:10, with only an empty `DAC/`), so
+`line66_index.csv`, `line66_grid_anom.nc` etc. are gone and the figures could not
+be redrawn. They were instead recovered from the base64 data URIs inlined in
+`one_pager/El_Nino_Sep2026.html` — the repository turns out to hold a complete
+copy of both PNGs that way. The isopycnal-oxygen percentage (−30 of 210 µmol/kg
+= −14 %) likewise cannot be recomputed without the products, so the 2017–2024
+mean is stored as a constant in the script. Rebuilding the products would need
+another ERDDAP/DAC download and would change the data vintage, so it was not done.
+
+**Script.** `reports/El_Nino_2026/scripts/make_newsletter.py --date 2026-09-03`
+reads `figs/2026_09/stats.json`, obtains the two figures (`--figs auto`: draw
+them from the glider products by importing `make_one_pager` when
+`line66_index.csv` is present, otherwise recover them from the briefing HTML),
+writes month-stamped PNGs to `newsletter/figs/`, fills the page template with
+the numbers from `stats.json` (index now/peak, 2015–16 peak, 100 m anomaly, ONI,
+Monterey sea level, marine-heatwave day counts, oxygen) and writes
+`newsletter/README.md` plus a dated archive copy
+`newsletter/El_Nino_public_Sep2026.md`. Figure file names carry the month so the
+dated copies keep pointing at their own figures.
+
+**The page.** ~800 words, plain English, no jargon left unexplained (upwelling,
+coastal Kelvin wave and "normal" are all defined in-line), °C with °F and cm with
+inches throughout. Sections: headline + lede; a paragraph on what the gliders are;
+"What the gliders see" (already warm and warm to depth; so far a marine heatwave
+rather than El Niño; the El Niño signal due in October); the two figures with
+plain captions; "What this could mean for the Monterey Bay region" (coastal
+flooding/erosion, marine life, food web/fisheries, the oxygen result); a caveat
+that none of this forecasts a particular storm or fish season; "What we are
+watching next month"; and a footer with the data credits (CUGN / D. Rudnick /
+Scripps IDG, SprayData, IOOS Glider DAC, NOAA CPC, CO-OPS, OISST), the UCSC
+Ocean Sciences attribution, the monthly cadence and a link to the Scripps El Niño
+product. No author name and no mention of AI assistance, following the choices
+made for the briefing. The funding ask from the leadership version was dropped.
+
+**Redirect target.** GitHub renders `README.md` at the folder URL, so the UCSC
+page should point at
+`https://github.com/Sea-Meets-the-Stars/cugn/tree/main/reports/El_Nino_2026/newsletter`
+(currently on the `super-el-nino` branch; the link works once merged to `main`).
+A public-facing contact line is the one thing a reader may miss — easy to add to
+the footer template if you want one.
+
+**Model note.** Run on Opus 5; Fable was not the session model.
