@@ -75,7 +75,118 @@ Use Fable if you can.  Log your work.
 
 Use Fable if you can.  Log your work.
 
-## Q&A
+2. This is great.  If I wish to post this markdown file to the UCSC website (specifically the Ocean Science website: https://ocean.ucsc.edu/), how should I do so?  Please put suggestions in the Newsletter section below.  Use Fable if you can.  Log your work.
+
+## Newsletter
+
+**How to post the newsletter on ocean.ucsc.edu (2026-09-11).**
+
+### What the site actually is
+
+I probed the public site (HTTP headers, `/wp-json/`, page list) rather than
+guessing:
+
+- **WordPress** with the block ("Gutenberg") editor, running a custom campus
+  theme that identifies itself as *Ocean Sciences 7.0.4*, behind an openresty
+  cache. Page responses carry `cache-control: max-age=3575`, so an edit can take
+  up to an hour to appear for anonymous visitors unless the cache is purged.
+- Campus plugins visible in the REST namespaces: `ucscgutenbergblocks/v1` (the
+  campus block library), **`ed11y/v1` = Editoria11y**, the accessibility checker
+  that nags editors about missing image alt text, skipped heading levels and
+  vague link text; also Custom Post Type UI, Duplicate Post, Akismet, WPMU DEV.
+  No redirect plugin appears (`redirection/v1` is absent), so assume you cannot
+  create your own 301s — someone with server/plugin access would have to.
+- **The site is page-driven, not blog-driven.** It has 49 pages and effectively
+  no posts (the only one is a stray "hello-world" from July 2024). News lives as
+  page content at `/news/` — short dated blurbs, mostly linking out to
+  `news.ucsc.edu` — and `/news/department-newsletter/` is simply a list of links
+  to Google Drive PDFs. So expect to be given *a page*, not a blog post, and
+  expect the department's habit to be "link out" rather than "host content".
+- Contacts: **osadmin@ucsc.edu** (department administrative office, EMS A312,
+  831-459-2563) for site access and page creation; **science@ucsc.edu** (Science
+  Division communications) for a news story; the footer's "Found a bug? Notify
+  us" link for campus web support.
+
+### Recommended: a native page under /news/, kept monthly
+
+Best readability, campus branding, accessibility and search visibility, and the
+URL is something you can hand to a reporter.
+
+1. Ask osadmin@ucsc.edu for an **Editor (or Author) account** on the site and a
+   page at, say, `ocean.ucsc.edu/news/el-nino-monitor/` (a child of `/news/`, so
+   it inherits that section's navigation). Also ask whether they will add a short
+   vanity path such as `ocean.ucsc.edu/el-nino` pointing at it.
+2. Run `python reports/El_Nino_2026/scripts/make_newsletter.py --date 2026-09-03`.
+   Besides the Markdown page it now writes
+   `newsletter/El_Nino_public_Sep2026_wordpress.html`, which is **WordPress block
+   markup, ready to paste**.
+3. In the page editor switch to **Code editor** (⌥⇧⌘M on a Mac; the ⋮ menu →
+   Code editor) and paste that file wholesale. The H1 is deliberately omitted —
+   WordPress supplies the page title, which should be "El Niño and the ocean off
+   Monterey Bay". Do *not* paste the raw Markdown: the editor will leave your
+   `**asterisks**` showing.
+4. Upload the two PNGs from `newsletter/figs/` to the Media Library and replace
+   the two `MEDIA-LIBRARY-URL/` placeholders in the `<img src="...">` with their
+   URLs. Keep the `alt` text that is already in the file — it describes the trend
+   in each chart, which is what Editoria11y and a screen-reader user want. The
+   figure file names carry the month, so the Media Library will not silently
+   append `-1`, `-2` each month. At ~1750 px wide and under 200 KB the PNGs are
+   fine as-is; the theme scales them into its content column.
+5. Publish, then wait out the cache (or ask for a purge) before checking as a
+   logged-out visitor.
+6. Add a closing line linking the technical record on GitHub: "Full technical
+   report, figures and code" →
+   `https://github.com/Sea-Meets-the-Stars/cugn/tree/main/reports/El_Nino_2026`.
+7. Each month: re-run the script, paste the new version over the old, and add the
+   previous month to a short "Past updates" list (keep dated child pages, e.g.
+   `/news/el-nino-monitor/september-2026/`, if you want the archive readable).
+   Put "Updated monthly — last updated <date>" near the top.
+
+Cost: about ten minutes a month once the account exists.
+
+### Alternatives, in the order I would consider them
+
+- **Blurb on /news/ that links to GitHub** (no account needed). Mail osadmin a
+  two-sentence dated item in the style already on that page, pointing at
+  `.../tree/main/reports/El_Nino_2026/newsletter`. Zero friction and it matches
+  the department's existing practice, but you are sending the general public to
+  github.com, where the page sits inside developer chrome. Good as a stopgap for
+  September, not as the permanent home.
+- **GitHub Pages + a link from ocean.ucsc.edu** — the best option if you want the
+  Markdown to stay the single source of truth and never touch WordPress monthly.
+  Enable Settings → Pages → Deploy from branch `main`, folder `/docs`, copy the
+  newsletter to `docs/el-nino/index.md` with Jekyll front matter and a theme; you
+  get a clean rendered page at
+  `https://sea-meets-the-stars.github.io/cugn/el-nino/` that updates on `git
+  push`, and the UCSC page becomes one paragraph plus a link. Trade-off: the
+  content lives off-campus, unbranded and outside the campus accessibility
+  review. Note that a *real* redirect from ocean.ucsc.edu almost certainly is not
+  available to you (no redirect plugin), and I would not use a meta-refresh:
+  bouncing a visitor off a ucsc.edu page reads as broken. A prominent link is
+  better than a redirect here.
+- **Pitch the first installment to UCSC News** via science@ucsc.edu / Science
+  Division communications. That is exactly the pattern the `/news/` page follows
+  (blurb on the department page, story on news.ucsc.edu), and a news story will
+  reach far more Monterey Bay readers than a department page will. Do this once
+  for the launch and keep the monthly updates on your own page; the campus news
+  office will not run a monthly series.
+- **PDF in Drive, linked from /news/department-newsletter/** — mirrors what the
+  department already does with its own newsletter, and needs nothing from you but
+  an email. It is the worst option for accessibility, search and citation, so use
+  it only if the department declines to host a page.
+
+### Worth doing whichever route you pick
+
+- Keep the GitHub copy as the technical archive (report, figures, scripts) and
+  link it from the public page, so the public page stays short.
+- Send the link to the IMS communications person and the Monterey Bay-area press
+  contacts when the first one goes up; a page nobody knows about is the usual
+  failure mode.
+- If you want readers to come back each month, a low-effort mailing list (Google
+  Group, or a campus list) beats hoping they revisit the page.
+- The page currently has no contact line. For a public audience one is worth
+  adding — even just "Questions: Ocean Sciences, ocean.ucsc.edu" or your email.
+
 
 ## One pager
 
@@ -936,5 +1047,49 @@ page should point at
 (currently on the `super-el-nino` branch; the link works once merged to `main`).
 A public-facing contact line is the one thing a reader may miss — easy to add to
 the footer template if you want one.
+
+**Model note.** Run on Opus 5; Fable was not the session model.
+
+### 2026-09-11 (Public newsletter, prompt 2: worked out how to post on ocean.ucsc.edu; added a WordPress export)
+
+**Reconnaissance instead of guesswork.** Probed the public department site with
+curl and its REST API: `ocean.ucsc.edu` is **WordPress** with the block editor
+and a campus theme ("Ocean Sciences 7.0.4") behind an openresty cache
+(`max-age=3575`, so edits lag up to an hour for anonymous visitors). The
+`/wp-json/` namespaces expose the campus plugin set — `ucscgutenbergblocks/v1`,
+**`ed11y/v1` (Editoria11y accessibility checker)**, Custom Post Type UI,
+Duplicate Post, Akismet, WPMU DEV — and notably *no* redirect plugin, so a real
+301 from ocean.ucsc.edu is out of your hands. The content model matters most: 49
+pages and effectively no posts (one "hello-world" from July 2024); `/news/` is a
+page of short dated blurbs that mostly link to `news.ucsc.edu`, and
+`/news/department-newsletter/` is nothing but a list of Google Drive PDF links.
+So the department's habit is to link out, and what you would be given is a page,
+not a blog post. Contacts found: `osadmin@ucsc.edu` (dept office, EMS A312) for
+site access, `science@ucsc.edu` (Science Division comms) for a news story.
+
+**Suggestions written to the Newsletter section.** Recommended route: a native
+page at `ocean.ucsc.edu/news/el-nino-monitor/`, pasted from a generated
+WordPress-block file, figures uploaded to the Media Library with the alt text
+kept, GitHub linked at the bottom as the technical archive, refreshed monthly
+(~10 min). Alternatives ranked after it: a `/news/` blurb linking to GitHub (no
+account needed, stopgap); GitHub Pages under `docs/` plus a link from UCSC (keeps
+Markdown as the single source, but off-campus and unbranded); a one-off pitch to
+UCSC News via Science Division comms (the pattern `/news/` already follows, and
+the widest local reach); and a Drive PDF linked from the department-newsletter
+page (matches existing practice, worst for accessibility and search). Argued
+against an auto-redirect/meta-refresh: bouncing a visitor off a ucsc.edu page
+reads as broken, and a prominent link serves the same purpose.
+
+**New deliverable.** `make_newsletter.py` now also writes
+`newsletter/El_Nino_public_<Mon><YYYY>_wordpress.html` — the same page converted
+to WordPress block markup by a small `md_to_wp_blocks()` (paragraphs, headings,
+lists, images, separator; `_inline()` handles bold/italic/links). Neither pandoc
+nor python-markdown is in `ocean14`, hence the hand-rolled converter over the
+restricted Markdown subset the page uses. It drops the H1 (WordPress owns the
+title) and leaves `MEDIA-LIBRARY-URL/<file>.png` placeholders in the image `src`
+so it is obvious what must be swapped after upload. Also rewrote both figure alt
+texts to describe the *trend* in each chart rather than name it, which is what
+Editoria11y and a screen-reader user need; those alt texts flow into both the
+Markdown and the WordPress file.
 
 **Model note.** Run on Opus 5; Fable was not the session model.
